@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "scheme": "marcahora",
+    "userInterfaceStyle": "automatic",
+    "orientation": "default",
+    "web": {
+      "bundler": "metro"
+    },
+    "name": "marcahora",
+    "slug": "marcahora",
+    "plugins": ["expo-font"],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}

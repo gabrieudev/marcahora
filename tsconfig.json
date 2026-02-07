@@ -1,0 +1,3 @@
+{
+  "extends": "@marcahora/config/tsconfig.base.json"
+}

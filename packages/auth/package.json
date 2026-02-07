@@ -1,0 +1,25 @@
+{
+  "name": "@marcahora/auth",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@better-auth/expo": "catalog:",
+    "@marcahora/db": "workspace:*",
+    "@marcahora/env": "workspace:*",
+    "better-auth": "catalog:",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@marcahora/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}
