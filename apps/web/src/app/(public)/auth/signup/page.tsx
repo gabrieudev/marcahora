@@ -11,9 +11,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { useSession } from "@/providers/auth-provider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import {
+  ArrowLeft,
   CheckCircle,
   Eye,
   EyeOff,
@@ -26,10 +28,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import * as z from "zod";
 import SocialLogin from "../components/social-login";
-import { useSession } from "@/providers/auth-provider";
-import { toast } from "sonner";
 
 const passwordValidation = z
   .string()
@@ -337,6 +338,16 @@ export default function RegisterPage() {
               </Button>
             </form>
           </Form>
+
+          <div className="mt-6 text-center">
+            <Link
+              href="/"
+              className="text-sm text-primary hover:underline inline-flex items-center"
+            >
+              <ArrowLeft className="h-3 w-3 mr-1" />
+              Voltar para a página inicial
+            </Link>
+          </div>
 
           <div className="mt-6">
             <div className="relative">

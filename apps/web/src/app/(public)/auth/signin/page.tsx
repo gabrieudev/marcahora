@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -14,14 +15,13 @@ import { Separator } from "@/components/ui/separator";
 import { useSession } from "@/providers/auth-provider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Lock, LogIn, Mail } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Lock, LogIn, Mail } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import SocialLogin from "../components/social-login";
-import { Checkbox } from "@/components/ui/checkbox";
 
 const loginSchema = z.object({
   email: z.email({ message: "Email inválido" }),
@@ -201,6 +201,16 @@ export default function LoginPage() {
               </Button>
             </form>
           </Form>
+
+          <div className="mt-6 text-center">
+            <Link
+              href="/"
+              className="text-sm text-primary hover:underline inline-flex items-center"
+            >
+              <ArrowLeft className="h-3 w-3 mr-1" />
+              Voltar para a página inicial
+            </Link>
+          </div>
 
           <div className="mt-6">
             <div className="relative">
