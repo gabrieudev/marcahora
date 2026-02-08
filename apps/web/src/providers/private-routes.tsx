@@ -1,0 +1,21 @@
+"use client";
+
+import { useSession } from "@/providers/auth-provider";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
+export function PrivateRoutes({ children }: { children: React.ReactNode }) {
+  const { session, isLoading } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && !session) {
+      router.push("/");
+    }
+  }, [isLoading, session, router]);
+
+  if (isLoading) return null;
+  if (!session) return null;
+
+  return <>{children}</>;
+}
