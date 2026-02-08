@@ -10,11 +10,11 @@ export class AuthController {
   @All("*")
   async handleAuth(@Req() req: ExpressRequest, @Res() res: ExpressResponse) {
     try {
-      // Reconstrói a URL completa (mesma lógica do Fastify)
+      // Reconstrói a URL completa
       const host = req.headers.host ?? "localhost:3000";
       const url = new URL(req.originalUrl || req.url, `http://${host}`);
 
-      // Constrói Headers (Fetch API)
+      // Constrói Headers
       const headers = new Headers();
       Object.entries(req.headers).forEach(([key, value]) => {
         if (!value) return;
@@ -41,16 +41,43 @@ export class AuthController {
 
       const response = await auth.handler(fetchRequest);
 
-      // Repasse fiel do status e headers
+      // status
       res.status(response.status);
+
+      // headers: filtrar hop-by-hop, preservar múltiplos Set-Cookie
+      const HOP_BY_HOP = new Set([
+        "transfer-encoding",
+        "connection",
+        "keep-alive",
+        "proxy-authenticate",
+        "proxy-authorization",
+        "te",
+        "trailer",
+        "upgrade",
+        "content-length",
+      ]);
+
       response.headers.forEach((value, key) => {
-        // evita sobrescrever hop-by-hop headers controlados pelo Express automaticamente, se quiser:
-        res.setHeader(key, value);
+        const lower = key.toLowerCase();
+        if (HOP_BY_HOP.has(lower)) return;
+
+        if (lower === "set-cookie") {
+          res.append("Set-Cookie", value);
+        } else {
+          res.setHeader(key, value);
+        }
       });
 
-      // Corpo: envia texto (igual ao seu exemplo original)
-      const text = response.body ? await response.text() : null;
-      res.send(text);
+      // enviar corpo
+      if (response.body) {
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        // opcional: set content-length
+        res.setHeader("Content-Length", String(buffer.length));
+        res.send(buffer);
+      } else {
+        res.sendStatus(response.status);
+      }
     } catch (error) {
       console.error("Authentication Error:", error);
       res.status(500).json({
