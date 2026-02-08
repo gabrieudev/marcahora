@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 
 import { Geist, Geist_Mono } from "next/font/google";
 
+import { SessionProvider } from "@/providers/auth-provider";
+import { Toaster } from "sonner";
 import "../index.css";
-import Header from "@/components/header";
-import Providers from "@/components/providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,12 +31,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers>
-          <div className="grid grid-rows-[auto_1fr] h-svh">
-            <Header />
-            {children}
-          </div>
-        </Providers>
+        <Toaster />
+        <SessionProvider>{children}</SessionProvider>
       </body>
     </html>
   );
