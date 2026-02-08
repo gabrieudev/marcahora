@@ -5,16 +5,16 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export function PublicRoutes({ children }: { children: React.ReactNode }) {
-  const { session, isLoading } = useSession();
+  const { session, isSessionLoading } = useSession();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && session) {
+    if (!isSessionLoading && session) {
       router.replace("/dashboard");
     }
-  }, [isLoading, session, router]);
+  }, [isSessionLoading, session, router]);
 
-  if (isLoading) return null;
+  if (isSessionLoading) return null;
   if (session) return null;
 
   return <>{children}</>;

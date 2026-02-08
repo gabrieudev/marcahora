@@ -7,6 +7,7 @@ import { Menu, Users, X } from "lucide-react";
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 type MenuItem = {
@@ -15,6 +16,7 @@ type MenuItem = {
 };
 
 export default function Header() {
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const menuItems: MenuItem[] = [
@@ -69,10 +71,19 @@ export default function Header() {
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
-          <Button className="cursor-pointer" variant="outline" size="sm">
+          <Button
+            onClick={() => router.push("/auth/signin")}
+            className="cursor-pointer"
+            variant="outline"
+            size="sm"
+          >
             Entrar
           </Button>
-          <Button className="cursor-pointer" size="sm">
+          <Button
+            onClick={() => router.push("/auth/signup")}
+            className="cursor-pointer"
+            size="sm"
+          >
             <Users className="h-4 w-4 mr-2" />
             Começar Gratuitamente
           </Button>
@@ -111,10 +122,19 @@ export default function Header() {
               </Link>
             ))}
             <div className="pt-4 space-y-2">
-              <Button variant="outline" className="w-full">
+              <Button
+                onClick={() => router.push("/auth/signin")}
+                variant="outline"
+                className="w-full"
+              >
                 Entrar
               </Button>
-              <Button className="w-full">Começar Gratuitamente</Button>
+              <Button
+                onClick={() => router.push("/auth/signup")}
+                className="w-full"
+              >
+                Começar Gratuitamente
+              </Button>
             </div>
           </div>
         </motion.div>

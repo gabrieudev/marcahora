@@ -3,8 +3,11 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Users } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function CTASection() {
+  const router = useRouter();
+
   return (
     <section id="cta" className="py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,15 +25,13 @@ export default function CTASection() {
               simplificar a gestão dos seus eventos.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button className="cursor-pointer" size="lg" variant="secondary">
-                Criar Conta Gratuita
-              </Button>
               <Button
+                onClick={() => router.push("/auth/signup")}
+                className="cursor-pointer"
                 size="lg"
-                variant="outline"
-                className="bg-white/10 hover:bg-white/20 hover:text-white cursor-pointer"
+                variant="secondary"
               >
-                Agendar Demonstração
+                Criar Conta Gratuita
               </Button>
             </div>
           </div>

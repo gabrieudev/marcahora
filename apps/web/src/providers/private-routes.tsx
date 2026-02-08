@@ -5,16 +5,16 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export function PrivateRoutes({ children }: { children: React.ReactNode }) {
-  const { session, isLoading } = useSession();
+  const { session, isSessionLoading } = useSession();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && !session) {
+    if (!isSessionLoading && !session) {
       router.push("/");
     }
-  }, [isLoading, session, router]);
+  }, [isSessionLoading, session, router]);
 
-  if (isLoading) return null;
+  if (isSessionLoading) return null;
   if (!session) return null;
 
   return <>{children}</>;

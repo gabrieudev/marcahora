@@ -23,11 +23,16 @@ type Session = NonNullable<RawSession>;
 
 type SessionContextValue = {
   session: Session | null;
-  isLoading: boolean;
+  isAuthLoading: boolean;
+  isSessionLoading: boolean;
   refresh: () => Promise<void>;
   signOut: () => Promise<void>;
   signUp: (body: Prettify<Session["user"]>) => Promise<void>;
-  signIn: (email: string, password: string) => Promise<void>;
+  signIn: (
+    email: string,
+    password: string,
+    rememberMe: boolean,
+  ) => Promise<void>;
 };
 
 const SessionContext = createContext<SessionContextValue | undefined>(
@@ -37,25 +42,16 @@ const SessionContext = createContext<SessionContextValue | undefined>(
 export function SessionProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [session, setSession] = useState<Session | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isSessionLoading, setIsSessionLoading] = useState(true);
+  const [isAuthLoading, setIsAuthLoading] = useState(false);
 
   const loadSession = async () => {
-    setIsLoading(true);
+    setIsSessionLoading(true);
     try {
-      const { data, error } = await authClient.getSession();
-
-      if (error) {
-        console.error("Erro ao buscar sessão:", error);
-        setSession(null);
-        return;
-      }
-
+      const { data } = await authClient.getSession();
       setSession(data ?? null);
-    } catch (err) {
-      console.error("Erro inesperado ao buscar sessão:", err);
-      setSession(null);
     } finally {
-      setIsLoading(false);
+      setIsSessionLoading(false);
     }
   };
 
@@ -64,54 +60,83 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signOut = async () => {
-    try {
-      await authClient.signOut();
-      setSession(null);
-      router.push("/");
-    } catch (error) {
-      console.error("Erro ao fazer logout:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/");
+        },
+      },
+    });
+    await loadSession();
   };
 
   const signUp = async (body: any) => {
-    setIsLoading(true);
+    setIsAuthLoading(true);
     try {
-      await authClient.signUp.email(body);
+      const { error } = await authClient.signUp.email({
+        name: body.name,
+        email: body.email,
+        password: body.password,
+      });
+
+      if (error) {
+        console.log("Erro ao fazer cadastro:", error);
+        toast.error(`${error.message || "Tente novamente mais tarde"}`);
+      }
+
       await loadSession();
       toast.success("Cadastro realizado com sucesso!");
       router.push("/dashboard");
     } catch (error) {
       console.error("Erro ao fazer login:", error);
     } finally {
-      setIsLoading(false);
+      setIsAuthLoading(false);
     }
   };
 
-  const signIn = async (email: string, password: string) => {
-    setIsLoading(true);
+  const signIn = async (
+    email: string,
+    password: string,
+    rememberMe: boolean,
+  ) => {
     try {
-      await authClient.signIn.email({ email, password });
-      await loadSession();
-      router.push("/dashboard");
+      setIsAuthLoading(true);
+      const { data, error } = await authClient.signIn.email(
+        {
+          email: email,
+          password: password,
+          rememberMe: rememberMe,
+        },
+        { redirect: undefined },
+      );
+
+      if (error) {
+        console.log("Erro ao fazer login:", error);
+        toast.error("Email ou senha inválidos.");
+      }
+
+      if (data?.user) {
+        await loadSession();
+        router.push("/dashboard");
+      }
     } catch (error) {
-      console.error("Erro ao fazer login:", error);
+      console.log("Erro inesperado:", error);
     } finally {
-      setIsLoading(false);
+      setIsAuthLoading(false);
     }
   };
 
   const value = useMemo(
     () => ({
       session,
-      isLoading,
+      isAuthLoading,
+      isSessionLoading,
       refresh: loadSession,
       signOut,
       signUp,
       signIn,
     }),
-    [session, isLoading],
+    [session, isAuthLoading, isSessionLoading],
   );
 
   return (
