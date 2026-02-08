@@ -7,7 +7,7 @@ import { auth } from "@marcahora/auth";
 
 @Controller("api/auth")
 export class AuthController {
-  @All("*")
+  @All("*path")
   async handleAuth(@Req() req: ExpressRequest, @Res() res: ExpressResponse) {
     try {
       // Reconstrói a URL completa
