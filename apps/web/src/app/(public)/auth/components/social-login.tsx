@@ -2,28 +2,26 @@
 
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { Github, Chrome } from "lucide-react";
-import { useTheme } from "next-themes";
+import { FaLinkedin, FaGoogle } from "react-icons/fa";
 
 interface SocialLoginProps {
   isLoading?: boolean;
 }
 
 export default function SocialLogin({ isLoading }: SocialLoginProps) {
-  const { theme } = useTheme();
-
   const socialProviders = [
     {
       name: "Google",
-      icon: Chrome,
+      icon: FaGoogle,
       provider: "google",
       color: "hover:bg-red-50 border-red-200 text-red-600 hover:text-red-700",
     },
     {
-      name: "GitHub",
-      icon: Github,
-      provider: "github",
-      color: `${theme === "dark" ? "hover:bg-gray-700/50 border-gray-600 text-gray-300 hover:text-gray-100" : "hover:bg-white-100 border-white-300 text-white-800 hover:text-white-900"}`,
+      name: "LinkedIn",
+      icon: FaLinkedin,
+      provider: "linkedin",
+      color:
+        "hover:bg-blue-50 border-blue-200 text-blue-600 hover:text-blue-700",
     },
   ];
 

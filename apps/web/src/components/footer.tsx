@@ -2,23 +2,19 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import {
-  Calendar,
-  Mail,
-  Phone,
-  MapPin,
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
-  Github,
-  Heart,
-} from "lucide-react";
+import { Calendar, Mail, Phone, MapPin, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import type { Route } from "next";
+import {
+  FaLinkedin,
+  FaTwitter,
+  FaFacebook,
+  FaInstagram,
+  FaGithub,
+} from "react-icons/fa";
 
 type FooterLink = {
   label: string;
@@ -53,11 +49,11 @@ const footerLinks: Record<string, FooterLink[]> = {
 };
 
 const socialLinks = [
-  { icon: Facebook, label: "Facebook", href: "#" },
-  { icon: Twitter, label: "Twitter", href: "#" },
-  { icon: Instagram, label: "Instagram", href: "#" },
-  { icon: Linkedin, label: "LinkedIn", href: "#" },
-  { icon: Github, label: "GitHub", href: "#" },
+  { icon: FaFacebook, label: "Facebook", href: "#" },
+  { icon: FaTwitter, label: "Twitter", href: "#" },
+  { icon: FaInstagram, label: "Instagram", href: "#" },
+  { icon: FaLinkedin, label: "LinkedIn", href: "#" },
+  { icon: FaGithub, label: "GitHub", href: "#" },
 ];
 
 export default function Footer() {
