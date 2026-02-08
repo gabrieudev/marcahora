@@ -1,27 +1,34 @@
 {
   "name": "server",
   "type": "module",
-  "main": "src/index.ts",
+  "main": "src/main.ts",
   "scripts": {
     "build": "tsdown",
     "check-types": "tsc -b",
-    "compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
-    "dev": "bun run --hot src/index.ts",
-    "start": "bun run dist/index.mjs"
+    "compile": "bun build --compile --minify --sourcemap --bytecode ./src/main.ts --outfile server",
+    "dev": "bun run --hot src/main.ts",
+    "start": "bun run dist/main.mjs"
   },
   "dependencies": {
     "@fastify/cors": "^11.0.1",
     "@marcahora/auth": "workspace:*",
     "@marcahora/db": "workspace:*",
     "@marcahora/env": "workspace:*",
+    "@nestjs/common": "^11.1.13",
+    "@nestjs/core": "^11.1.13",
+    "@nestjs/platform-express": "^11.1.13",
+    "@thallesp/nestjs-better-auth": "^2.2.5",
     "better-auth": "catalog:",
     "dotenv": "catalog:",
-    "fastify": "^5.3.3",
+    "express": "^5.2.1",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@marcahora/config": "workspace:*",
     "@types/bun": "catalog:",
+    "@types/express": "^5.0.6",
     "tsdown": "^0.16.5",
     "typescript": "catalog:"
   }
