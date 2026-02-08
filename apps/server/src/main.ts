@@ -1,9 +1,22 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { env } from "@marcahora/env/server";
+import { LoggingInterceptor } from "./common/logging/logging.interceptor";
+import { WinstonLogger } from "./common/logging/winston-logger.service";
+import { requestIdMiddleware } from "./common/logging/request-id.middleware";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // middleware de request ID para rastreamento de logs
+  app.use(requestIdMiddleware);
+
+  // interceptor global
+  const logger = new WinstonLogger();
+  app.useGlobalInterceptors(new LoggingInterceptor(logger));
+
+  // logger global do Nest
+  app.useLogger(logger);
 
   app.enableCors({
     origin: env.CORS_ORIGIN,
