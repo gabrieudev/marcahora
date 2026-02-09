@@ -1,6 +1,7 @@
 {
   "extends": "@marcahora/config/tsconfig.base.json",
   "compilerOptions": {
+    "strictPropertyInitialization": false,
     "composite": true,
     "outDir": "dist",
     "baseUrl": ".",
