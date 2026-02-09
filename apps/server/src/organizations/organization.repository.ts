@@ -1,9 +1,12 @@
-import { organizations } from "@marcahora/db/schema/schema";
+import { DRIZZLE_DB } from "@/shared/database/database.constants";
+import {
+  organizationMembers,
+  organizations,
+} from "@marcahora/db/schema/schema";
 import { Inject, Injectable } from "@nestjs/common";
 import { and, desc, eq, like, sql } from "drizzle-orm";
-import type { NewOrganization, Organization } from "./organization.schema";
 import type { NeonDatabase } from "drizzle-orm/neon-serverless";
-import { DRIZZLE_DB } from "@/shared/database/database.constants";
+import type { NewOrganization, Organization } from "./organization.schema";
 
 @Injectable()
 export class OrganizationsRepository {
@@ -63,14 +66,61 @@ export class OrganizationsRepository {
     return !!deleted;
   }
 
-  async findAllActive(limit = 50, offset = 0): Promise<Organization[]> {
-    return this.db
+  async findAllActive(
+    limit?: number,
+    offset?: number,
+  ): Promise<Organization[]> {
+    let query = this.db
       .select()
       .from(organizations)
       .where(eq(organizations.flActive, true))
-      .limit(limit)
-      .offset(offset)
-      .orderBy(desc(organizations.createdAt));
+      .orderBy(desc(organizations.createdAt))
+      .$dynamic();
+
+    if (limit !== undefined && offset !== undefined) {
+      query = query.limit(limit).offset(offset);
+    }
+
+    return query;
+  }
+
+  async findAllActiveByMember(
+    userId: string,
+    limit?: number,
+    offset?: number,
+  ): Promise<Organization[]> {
+    let query = this.db
+      .select({
+        id: organizations.id,
+        name: organizations.name,
+        slug: organizations.slug,
+        ownerId: organizations.ownerId,
+        settings: organizations.settings,
+        createdAt: organizations.createdAt,
+        updatedAt: organizations.updatedAt,
+        flActive: organizations.flActive,
+      })
+      .from(organizations)
+      .innerJoin(
+        organizationMembers,
+        eq(organizationMembers.organizationId, organizations.id),
+      )
+      .where(
+        and(
+          eq(organizations.flActive, true),
+          eq(organizationMembers.flActive, true),
+          eq(organizations.ownerId, userId),
+          eq(organizationMembers.userId, userId),
+        ),
+      )
+      .orderBy(desc(organizations.createdAt))
+      .$dynamic();
+
+    if (limit !== undefined && offset !== undefined) {
+      query = query.limit(limit).offset(offset);
+    }
+
+    return query;
   }
 
   async searchByName(name: string): Promise<Organization[]> {

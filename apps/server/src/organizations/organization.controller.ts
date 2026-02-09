@@ -44,14 +44,23 @@ export class OrganizationsController {
   }
 
   @Get()
-  @ApiOperation({ summary: "Listar todas as organizações ativas" })
+  @ApiOperation({ summary: "Listar organizações que o usuário é membro" })
   @ApiResponse({
     status: 200,
     description: "Lista de organizações",
     type: [OrganizationResponseDto],
   })
-  async findAll(): Promise<OrganizationResponseDto[]> {
-    return this.organizationsService.findAllActive();
+  @ApiResponse({ status: 404, description: "Parâmetros inválidos" })
+  async findAllByMember(
+    @CurrentUser() user: { id: string },
+    @Query("limit") limit?: number,
+    @Query("offset") offset?: number,
+  ): Promise<OrganizationResponseDto[]> {
+    return this.organizationsService.findAllActiveByMember(
+      user.id,
+      limit,
+      offset,
+    );
   }
 
   @Get("search")

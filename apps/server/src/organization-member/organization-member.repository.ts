@@ -52,10 +52,10 @@ export class MembersRepository {
   async findByOrganization(
     organizationId: string,
     includeInactive = false,
-    limit = 50,
-    offset = 0,
+    limit?: number,
+    offset?: number,
   ): Promise<OrganizationMember[]> {
-    return this.db
+    let query = this.db
       .select()
       .from(organizationMembers)
       .where(
@@ -68,8 +68,13 @@ export class MembersRepository {
         desc(organizationMembers.isOwner),
         asc(organizationMembers.joinedAt),
       )
-      .limit(limit)
-      .offset(offset);
+      .$dynamic();
+
+    if (limit !== undefined && offset !== undefined) {
+      query = query.limit(limit).offset(offset);
+    }
+
+    return query;
   }
 
   async findByUser(

@@ -1,9 +1,9 @@
 import {
-    BadRequestException,
-    ConflictException,
-    ForbiddenException,
-    Injectable,
-    NotFoundException,
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
 } from "@nestjs/common";
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
 import { OrganizationResponseDto } from "./dto/organization-response.dto";
@@ -71,8 +71,72 @@ export class OrganizationsService {
     return this.toResponse(organization);
   }
 
-  async findAllActive(): Promise<OrganizationResponseDto[]> {
-    const organizations = await this.organizationsRepository.findAllActive();
+  async findAllActive(
+    limit?: number,
+    offset?: number,
+  ): Promise<OrganizationResponseDto[]> {
+    const organizations = await this.organizationsRepository.findAllActive(
+      limit,
+      offset,
+    );
+    if (limit !== undefined && limit <= 0) {
+      throw new BadRequestException(
+        "O parâmetro 'limit' deve ser um número positivo",
+      );
+    }
+    if (offset !== undefined && offset < 0) {
+      throw new BadRequestException(
+        "O parâmetro 'offset' deve ser um número não negativo",
+      );
+    }
+
+    if (limit !== undefined && offset === undefined) {
+      throw new BadRequestException(
+        "O parâmetro 'offset' é obrigatório quando 'limit' é fornecido",
+      );
+    }
+    if (offset !== undefined && limit === undefined) {
+      throw new BadRequestException(
+        "O parâmetro 'limit' é obrigatório quando 'offset' é fornecido",
+      );
+    }
+
+    return organizations.map((org) => this.toResponse(org));
+  }
+
+  async findAllActiveByMember(
+    userId: string,
+    limit?: number,
+    offset?: number,
+  ): Promise<OrganizationResponseDto[]> {
+    const organizations =
+      await this.organizationsRepository.findAllActiveByMember(
+        userId,
+        limit,
+        offset,
+      );
+    if (limit !== undefined && limit <= 0) {
+      throw new BadRequestException(
+        "O parâmetro 'limit' deve ser um número positivo",
+      );
+    }
+    if (offset !== undefined && offset < 0) {
+      throw new BadRequestException(
+        "O parâmetro 'offset' deve ser um número não negativo",
+      );
+    }
+
+    if (limit !== undefined && offset === undefined) {
+      throw new BadRequestException(
+        "O parâmetro 'offset' é obrigatório quando 'limit' é fornecido",
+      );
+    }
+    if (offset !== undefined && limit === undefined) {
+      throw new BadRequestException(
+        "O parâmetro 'limit' é obrigatório quando 'offset' é fornecido",
+      );
+    }
+
     return organizations.map((org) => this.toResponse(org));
   }
 
