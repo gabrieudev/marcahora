@@ -36,7 +36,8 @@
 ```yaml
 ├── apps/
 │   ├── fumadocs/ # Documentação
-│   ├── web/      # Projeto frontend (Next.js + Shadcn UI)
+│   ├── web/      # Projeto web (Next.js + Shadcn UI)
+│   ├── native/   # Projeto mobile (React Native + Expo)
 │   └── server/   # Projeto backend (Nest.js + Drizzle)
 │
 ├── packages/
