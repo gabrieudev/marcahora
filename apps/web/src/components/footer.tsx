@@ -15,6 +15,7 @@ import {
   FaInstagram,
   FaGithub,
 } from "react-icons/fa";
+import Image from "next/image";
 
 type FooterLink = {
   label: string;
@@ -71,8 +72,14 @@ export default function Footer() {
               viewport={{ once: true }}
             >
               <div className="flex items-center gap-2 mb-4">
-                <div className="rounded-lg bg-primary p-2">
-                  <Calendar className="h-6 w-6 text-primary-foreground" />
+                <div className="rounded-lg p-2">
+                  <Image
+                    src="/logo.png"
+                    alt="MarcaHora"
+                    width={32}
+                    height={32}
+                    className="h-8 w-8"
+                  />
                 </div>
                 <span className="text-xl font-bold">MarcaHora</span>
               </div>
@@ -131,7 +138,7 @@ export default function Footer() {
                     <MapPin className="h-6 w-6 text-blue-500" />
                   </div>
                   <h4 className="font-semibold mb-1">Localização</h4>
-                  <p className="text-sm text-slate-300">São Paulo, SP</p>
+                  <p className="text-sm text-slate-300">Aracaju, SE</p>
                   <p className="text-xs text-slate-400">Brasil</p>
                 </div>
               </div>
@@ -144,8 +151,14 @@ export default function Footer() {
           <div className="col-span-2 md:col-span-4 lg:col-span-1">
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-4">
-                <div className="rounded-lg bg-primary p-2">
-                  <Calendar className="h-6 w-6 text-primary-foreground" />
+                <div className="rounded-lg p-2">
+                  <Image
+                    src="/logo.png"
+                    alt="MarcaHora"
+                    width={32}
+                    height={32}
+                    className="h-8 w-8"
+                  />
                 </div>
                 <span className="text-xl font-bold">MarcaHora</span>
               </div>
