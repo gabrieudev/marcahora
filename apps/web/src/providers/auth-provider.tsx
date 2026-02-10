@@ -85,8 +85,8 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       }
 
       await loadSession();
+
       toast.success("Cadastro realizado com sucesso!");
-      router.push("/dashboard");
     } catch (error) {
       console.error("Erro ao fazer login:", error);
     } finally {
@@ -101,19 +101,27 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   ) => {
     try {
       setIsAuthLoading(true);
-      const { data, error } = await authClient.signIn.email(
+      const { data } = await authClient.signIn.email(
         {
           email: email,
           password: password,
           rememberMe: rememberMe,
         },
-        { redirect: undefined },
+        {
+          redirect: undefined,
+          onError: (ctx) => {
+            if (ctx.error.status === 403) {
+              toast.error(
+                "Email não verificado. Verifique sua caixa de entrada.",
+              );
+            } else {
+              toast.error(
+                "Email ou senha incorretos. Verifique suas credenciais e tente novamente.",
+              );
+            }
+          },
+        },
       );
-
-      if (error) {
-        console.log("Erro ao fazer login:", error);
-        toast.error("Email ou senha inválidos.");
-      }
 
       if (data?.user) {
         await loadSession();
