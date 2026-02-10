@@ -10,22 +10,25 @@ export class AuthController {
   @All("*path")
   async handleAuth(@Req() req: ExpressRequest, @Res() res: ExpressResponse) {
     try {
-      // Reconstrói a URL completa
-      const host = req.headers.host ?? "localhost:3000";
-      const url = new URL(req.originalUrl || req.url, `http://${host}`);
+      const proto =
+        (req.headers["x-forwarded-proto"] as string) ?? req.protocol ?? "http";
+      const host =
+        (req.headers["x-forwarded-host"] as string) ??
+        req.headers.host ??
+        "localhost:3000";
 
-      // Constrói Headers
+      const url = new URL(req.originalUrl || req.url, `${proto}://${host}`);
+
       const headers = new Headers();
-      Object.entries(req.headers).forEach(([key, value]) => {
-        if (!value) return;
+      for (const [key, value] of Object.entries(req.headers)) {
+        if (!value) continue;
         const str = Array.isArray(value) ? value.join(",") : String(value);
-        headers.append(key, str);
-      });
+        headers.set(key, str);
+      }
 
-      // Body: só envia se existir
-      const methodHasBody = ["POST", "PUT", "PATCH", "DELETE"].includes(
-        req.method.toUpperCase(),
-      );
+      const method = req.method.toUpperCase();
+      const methodHasBody = ["POST", "PUT", "PATCH", "DELETE"].includes(method);
+
       const body =
         methodHasBody && req.body && Object.keys(req.body).length > 0
           ? typeof req.body === "string"
@@ -34,17 +37,16 @@ export class AuthController {
           : undefined;
 
       const fetchRequest = new Request(url.toString(), {
-        method: req.method,
+        method,
         headers,
         body,
+        redirect: "manual",
       });
 
       const response = await auth.handler(fetchRequest);
 
-      // status
       res.status(response.status);
 
-      // headers: filtrar hop-by-hop, preservar múltiplos Set-Cookie
       const HOP_BY_HOP = new Set([
         "transfer-encoding",
         "connection",
@@ -68,15 +70,13 @@ export class AuthController {
         }
       });
 
-      // enviar corpo
       if (response.body) {
         const arrayBuffer = await response.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
-        // opcional: set content-length
         res.setHeader("Content-Length", String(buffer.length));
         res.send(buffer);
       } else {
-        res.sendStatus(response.status);
+        res.end();
       }
     } catch (error) {
       console.error("Authentication Error:", error);
