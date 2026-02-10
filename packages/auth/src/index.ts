@@ -33,11 +33,16 @@ export const auth = betterAuth({
   },
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => {
+      const verificationUrl = url.replace(
+        /callbackURL=[^&]+/,
+        `callbackURL=${encodeURIComponent(`${env.CORS_ORIGIN}/auth/signin`)}`,
+      );
+
       await sendTemplateEmail("verification", {
         to: user.email,
         data: {
           email: user.email,
-          url,
+          url: verificationUrl,
         },
       });
     },

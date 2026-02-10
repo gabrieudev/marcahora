@@ -1,3 +1,5 @@
+import { env } from "@marcahora/env/server";
+
 interface VerificationEmailProps {
   url: string;
 }
@@ -128,7 +130,7 @@ export function VerificationEmail({ url }: VerificationEmailProps) {
                     <tr>
                       <td style={styles.header}>
                         <img
-                          src="../images/logo.png"
+                          src={`${env.CORS_ORIGIN}/logo.png`}
                           alt="Logo"
                           width={64}
                           height={64}
@@ -177,11 +179,11 @@ export function VerificationEmail({ url }: VerificationEmailProps) {
                     <tr>
                       <td style={styles.footer}>
                         <div>
-                          Se você não solicitou este e-mail, pode ignorá-lo —
+                          Se você não solicitou este e-mail, pode ignorá-lo,
                           nenhuma ação será tomada.
                         </div>
                         <div style={{ marginTop: 8 }}>
-                          © {new Date().getFullYear()} Sua Aplicação
+                          © {new Date().getFullYear()} MarcaHora
                         </div>
                       </td>
                     </tr>

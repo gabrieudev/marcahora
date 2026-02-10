@@ -85,8 +85,8 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       }
 
       await loadSession();
-
-      toast.success("Cadastro realizado com sucesso!");
+      router.push("/email");
+      sessionStorage.setItem("email", body.email);
     } catch (error) {
       console.error("Erro ao fazer login:", error);
     } finally {
@@ -108,12 +108,10 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
           rememberMe: rememberMe,
         },
         {
-          redirect: undefined,
           onError: (ctx) => {
             if (ctx.error.status === 403) {
-              toast.error(
-                "Email não verificado. Verifique sua caixa de entrada.",
-              );
+              sessionStorage.setItem("email", email);
+              router.push("/email");
             } else {
               toast.error(
                 "Email ou senha incorretos. Verifique suas credenciais e tente novamente.",
