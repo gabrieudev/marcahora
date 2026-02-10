@@ -1,8 +1,13 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { organizationMembers, users } from "@marcahora/db/schema/schema";
+import {
+  organizationMembers,
+  organizations,
+  users,
+} from "@marcahora/db/schema/schema";
 import type {
   OrganizationMember,
   NewOrganizationMember,
+  UserOrganizationMember,
 } from "./organization-member.schema";
 import { eq, and, desc, asc, sql } from "drizzle-orm";
 import type { NeonDatabase } from "drizzle-orm/neon-serverless";
@@ -25,28 +30,60 @@ export class MembersRepository {
     return member;
   }
 
-  async findById(id: string): Promise<OrganizationMember | null> {
-    const [member] = await this.db
-      .select()
+  async findById(id: string): Promise<UserOrganizationMember | null> {
+    const [result] = await this.db
+      .select({
+        member: organizationMembers,
+        user: users,
+        organization: organizations,
+      })
       .from(organizationMembers)
+      .leftJoin(users, eq(users.id, organizationMembers.userId))
+      .leftJoin(
+        organizations,
+        eq(organizations.id, organizationMembers.organizationId),
+      )
       .where(eq(organizationMembers.id, id));
-    return member || null;
+
+    if (!result) return null;
+
+    return {
+      ...(result.member as OrganizationMember),
+      user: result.user ?? null,
+      organization: result.organization ?? null,
+    };
   }
 
   async findByOrganizationAndUser(
     organizationId: string,
     userId: string,
-  ): Promise<OrganizationMember | null> {
-    const [member] = await this.db
-      .select()
+  ): Promise<UserOrganizationMember | null> {
+    const [result] = await this.db
+      .select({
+        member: organizationMembers,
+        user: users,
+        organization: organizations,
+      })
       .from(organizationMembers)
+      .leftJoin(users, eq(users.id, organizationMembers.userId))
+      .leftJoin(
+        organizations,
+        eq(organizations.id, organizationMembers.organizationId),
+      )
       .where(
         and(
           eq(organizationMembers.organizationId, organizationId),
           eq(organizationMembers.userId, userId),
         ),
       );
-    return member || null;
+
+    if (!result) return null;
+
+    return {
+      ...(result.member as OrganizationMember),
+      user: result.user ?? null,
+      organization: result.organization ?? null,
+    };
   }
 
   async findByOrganization(
@@ -54,10 +91,19 @@ export class MembersRepository {
     includeInactive = false,
     limit?: number,
     offset?: number,
-  ): Promise<OrganizationMember[]> {
+  ): Promise<UserOrganizationMember[]> {
     let query = this.db
-      .select()
+      .select({
+        member: organizationMembers,
+        user: users,
+        organization: organizations,
+      })
       .from(organizationMembers)
+      .leftJoin(users, eq(users.id, organizationMembers.userId))
+      .leftJoin(
+        organizations,
+        eq(organizations.id, organizationMembers.organizationId),
+      )
       .where(
         and(
           eq(organizationMembers.organizationId, organizationId),
@@ -74,16 +120,31 @@ export class MembersRepository {
       query = query.limit(limit).offset(offset);
     }
 
-    return query;
+    const results = await query;
+
+    return results.map((result) => ({
+      ...(result.member as OrganizationMember),
+      user: result.user ?? null,
+      organization: result.organization ?? null,
+    }));
   }
 
   async findByUser(
     userId: string,
     includeInactive = false,
-  ): Promise<OrganizationMember[]> {
+  ): Promise<UserOrganizationMember[]> {
     let query = this.db
-      .select()
+      .select({
+        member: organizationMembers,
+        user: users,
+        organization: organizations,
+      })
       .from(organizationMembers)
+      .leftJoin(users, eq(users.id, organizationMembers.userId))
+      .leftJoin(
+        organizations,
+        eq(organizations.id, organizationMembers.organizationId),
+      )
       .where(
         and(
           eq(organizationMembers.userId, userId),
@@ -91,7 +152,13 @@ export class MembersRepository {
         ),
       );
 
-    return query.orderBy(desc(organizationMembers.joinedAt));
+    const results = await query;
+
+    return results.map((result) => ({
+      ...(result.member as OrganizationMember),
+      user: result.user ?? null,
+      organization: result.organization ?? null,
+    }));
   }
 
   async update(
@@ -142,10 +209,19 @@ export class MembersRepository {
 
   async getOrganizationOwners(
     organizationId: string,
-  ): Promise<OrganizationMember[]> {
-    return this.db
-      .select()
+  ): Promise<UserOrganizationMember[]> {
+    let query = this.db
+      .select({
+        member: organizationMembers,
+        user: users,
+        organization: organizations,
+      })
       .from(organizationMembers)
+      .leftJoin(users, eq(users.id, organizationMembers.userId))
+      .leftJoin(
+        organizations,
+        eq(organizations.id, organizationMembers.organizationId),
+      )
       .where(
         and(
           eq(organizationMembers.organizationId, organizationId),
@@ -153,34 +229,13 @@ export class MembersRepository {
           eq(organizationMembers.flActive, true),
         ),
       );
-  }
 
-  async findMembersWithUserDetails(
-    organizationId: string,
-    includeInactive = false,
-  ) {
-    let query = this.db
-      .select({
-        member: organizationMembers,
-        user: {
-          id: users.id,
-          name: users.name,
-          email: users.email,
-          image: users.image,
-        },
-      })
-      .from(organizationMembers)
-      .leftJoin(users, eq(organizationMembers.userId, users.id))
-      .where(
-        and(
-          eq(organizationMembers.organizationId, organizationId),
-          includeInactive ? undefined : eq(organizationMembers.flActive, true),
-        ),
-      );
+    const results = await query;
 
-    return query.orderBy(
-      desc(organizationMembers.isOwner),
-      asc(organizationMembers.joinedAt),
-    );
+    return results.map((result) => ({
+      ...(result.member as OrganizationMember),
+      user: result.user ?? null,
+      organization: result.organization ?? null,
+    }));
   }
 }

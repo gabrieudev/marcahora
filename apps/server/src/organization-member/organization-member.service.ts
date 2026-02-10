@@ -162,17 +162,17 @@ export class MembersService {
     // Verificar se a organização existe
     await this.organizationsRepository.findById(organizationId);
 
-    const membersWithUsers =
-      await this.membersRepository.findMembersWithUserDetails(
-        organizationId,
-        includeInactive,
-      );
+    const membersWithUsers = await this.membersRepository.findByOrganization(
+      organizationId,
+      includeInactive,
+    );
 
     return membersWithUsers.map(
       (item) =>
         new MemberResponseDto({
-          ...item.member,
+          ...item,
           user: item.user,
+          organization: item.organization,
         }),
     );
   }
