@@ -1,5 +1,5 @@
 {
-  "name": "@marcahora/auth",
+  "name": "@marcahora/email",
   "type": "module",
   "exports": {
     ".": {
@@ -12,14 +12,17 @@
   "scripts": {},
   "dependencies": {
     "@better-auth/expo": "catalog:",
-    "@marcahora/email": "workspace:*",
-    "@marcahora/db": "workspace:*",
     "@marcahora/env": "workspace:*",
     "better-auth": "catalog:",
     "dotenv": "catalog:",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.3",
+    "resend": "^6.9.1",
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
     "@marcahora/config": "workspace:*",
     "typescript": "catalog:"
   }

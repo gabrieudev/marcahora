@@ -10,6 +10,7 @@
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@icons-pack/react-simple-icons": "^13.8.0",
+    "@marcahora/email": "workspace:*",
     "@marcahora/auth": "workspace:*",
     "@marcahora/env": "workspace:*",
     "@sendgrid/mail": "^8.1.6",
