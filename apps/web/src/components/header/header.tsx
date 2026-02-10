@@ -30,13 +30,21 @@ import {
   Home,
   LogOut,
   Menu,
+  Moon,
   Plus,
   Settings,
+  Sun,
   Ticket,
   User,
 } from "lucide-react";
 import Image from "next/image";
 import useHeader from "./use-header";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 export function MainHeader() {
   const {
@@ -53,6 +61,8 @@ export function MainHeader() {
     session,
     signOut,
     pathname,
+    toggleTheme,
+    theme,
   } = useHeader();
 
   return (
@@ -442,6 +452,29 @@ export function MainHeader() {
               </div>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {/* Tema */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={toggleTheme}
+                  className="cursor-pointer"
+                >
+                  {theme === "dark" ? (
+                    <Sun className="h-5 w-5" />
+                  ) : (
+                    <Moon className="h-5 w-5" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{theme === "dark" ? "Modo claro" : "Modo escuro"}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
 
           {/* Menu do Usuário */}
           <DropdownMenu>

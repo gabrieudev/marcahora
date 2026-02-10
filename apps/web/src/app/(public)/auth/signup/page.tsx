@@ -31,6 +31,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 import SocialLogin from "../components/social-login";
+import { authClient } from "@/lib/auth-client";
 
 const passwordValidation = z
   .string()

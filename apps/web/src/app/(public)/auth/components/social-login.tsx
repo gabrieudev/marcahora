@@ -2,33 +2,58 @@
 
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { FaLinkedin, FaGoogle } from "react-icons/fa";
+import { FaGithub, FaGoogle } from "react-icons/fa";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 
 interface SocialLoginProps {
   isLoading?: boolean;
 }
 
 export default function SocialLogin({ isLoading }: SocialLoginProps) {
+  const router = useRouter();
+  const { theme } = useTheme();
+
   const socialProviders = [
     {
       name: "Google",
       icon: FaGoogle,
       provider: "google",
       color: "hover:bg-red-50 border-red-200 text-red-600 hover:text-red-700",
+      signOn: async () => {
+        const { error } = await authClient.signIn.social({
+          provider: "google",
+        });
+
+        if (error) {
+          toast.error("Erro ao iniciar login com Google");
+          return;
+        }
+
+        router.push("/dashboard");
+      },
     },
     {
-      name: "LinkedIn",
-      icon: FaLinkedin,
-      provider: "linkedin",
-      color:
-        "hover:bg-blue-50 border-blue-200 text-blue-600 hover:text-blue-700",
+      name: "GitHub",
+      icon: FaGithub,
+      provider: "github",
+      color: `${theme === "dark" ? "hover:bg-white border-white text-white" : "hover:bg-black border-black text-black"}`,
+      signOn: async () => {
+        const { error } = await authClient.signIn.social({
+          provider: "github",
+        });
+
+        if (error) {
+          toast.error("Erro ao iniciar login com GitHub");
+          return;
+        }
+
+        router.push("/dashboard");
+      },
     },
   ];
-
-  const handleSocialLogin = (provider: string) => {
-    console.log(`Iniciando login com ${provider}`);
-    // Implementação futura
-  };
 
   return (
     <div className="mt-6 grid grid-cols-2 gap-3">
@@ -43,7 +68,7 @@ export default function SocialLogin({ isLoading }: SocialLoginProps) {
             type="button"
             variant="outline"
             className={`w-full cursor-pointer ${provider.color}`}
-            onClick={() => handleSocialLogin(provider.provider)}
+            onClick={provider.signOn}
             disabled={isLoading}
           >
             <provider.icon className="h-4 w-4" />

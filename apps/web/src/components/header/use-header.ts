@@ -27,6 +27,7 @@ import {
   Users,
 } from "lucide-react";
 import type { Route } from "next";
+import { useTheme } from "next-themes";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -79,6 +80,7 @@ export default function useHeader() {
   const { currentOrganizationId, handleOrganizationChange } =
     useOrganizationId();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   const { data: myMemberships, isLoading: isLoadingMyMemberships } = useQuery<
     OrganizationMember[]
@@ -101,6 +103,15 @@ export default function useHeader() {
   const currentOrgMembership = myMemberships?.find(
     (membership) => membership.organization?.id === currentOrganizationId,
   );
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  };
 
   const orgRoutes: NavItem[] = currentOrganization
     ? [
@@ -265,6 +276,8 @@ export default function useHeader() {
   };
 
   return {
+    theme,
+    toggleTheme,
     pathname,
     signOut,
     session,

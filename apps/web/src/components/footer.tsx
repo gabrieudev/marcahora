@@ -1,21 +1,21 @@
 "use client";
 
-import { motion } from "framer-motion";
-import Link from "next/link";
-import { Calendar, Mail, Phone, MapPin, Heart } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
+import { motion } from "framer-motion";
+import { Heart, Mail, MapPin, Phone } from "lucide-react";
 import type { Route } from "next";
-import {
-  FaLinkedin,
-  FaTwitter,
-  FaFacebook,
-  FaInstagram,
-  FaGithub,
-} from "react-icons/fa";
 import Image from "next/image";
+import Link from "next/link";
+import {
+    FaFacebook,
+    FaGithub,
+    FaInstagram,
+    FaLinkedin,
+    FaTwitter,
+} from "react-icons/fa";
 
 type FooterLink = {
   label: string;

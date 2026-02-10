@@ -165,6 +165,7 @@
       "dependencies": {
         "@better-auth/expo": "catalog:",
         "@marcahora/db": "workspace:*",
+        "@marcahora/email": "workspace:*",
         "@marcahora/env": "workspace:*",
         "better-auth": "catalog:",
         "dotenv": "catalog:",
