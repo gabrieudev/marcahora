@@ -13,6 +13,7 @@ export const auth = betterAuth({
       user: schema.users,
       session: schema.session,
       account: schema.account,
+      verification: schema.verification,
     },
   }),
   trustedOrigins: [
