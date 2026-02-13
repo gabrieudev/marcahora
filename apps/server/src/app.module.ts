@@ -8,7 +8,20 @@ import { OrganizationsModule } from "./organizations/organizations.module";
 @Module({
   controllers: [HealthController],
   imports: [
-    AuthModule.forRoot({ auth, isGlobal: true }),
+    AuthModule.forRoot({
+      auth,
+      isGlobal: true,
+      cookie: {
+        name: "__Secure-better-auth.state",
+        domain:
+          process.env.NODE_ENV === "production" ? ".onrender.com" : "localhost",
+        path: "/",
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        maxAge: 300,
+      },
+    }),
     OrganizationsModule,
     MembersModule,
   ],
